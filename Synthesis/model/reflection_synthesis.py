@@ -56,28 +56,32 @@ class ReflectionSynthesisModel(BaseModel):
         print('-----------------------------------------------')
 
     def set_input(self, input):
+        input_A = input['A']
+        input_A_origin = input['A_origin']
         input_B = input['B']
-        input_B_origin = input['B_origin']
-        One = torch.ones(input_B.shape)
+        One = torch.ones(input_A.shape)
             
         if len(self.gpu_ids) > 0:
-            input_B = input_B.cuda(self.gpu_ids[0], async=True)
-            One = One.cuda(self.gpu_ids[0], async=True)
+            input_A = input_A.cuda(self.gpu_ids[0], non_blocking=True)
+            input_B = input_B.cuda(self.gpu_ids[0], non_blocking=True)
+            One = One.cuda(self.gpu_ids[0], non_blocking=True)
                         
+        self.input_A = input_A
+        self.input_A_origin = input_A_origin
         self.input_B = input_B
-        self.input_B_origin = input_B_origin
         self.One = One
-        if self.opt.phase == 'test':
-            input_A = input['A']
-            input_A = input_A.cuda(self.gpu_ids[0], async=True)
-            self.input_A = input_A
-        self.image_paths = input['B_paths']
+        if self.opt.phase == 'train':
+            input_C = input['C']
+            input_C = input_C.cuda(self.gpu_ids[0], non_blocking=True)
+            self.input_C = input_C
+        self.image_paths = input['A_paths']
 
     def forward(self):
+        self.real_A = self.input_A
+        self.real_A_origin = self.input_A_origin
         self.real_B = self.input_B
-        self.real_B_origin = self.input_B_origin
-        if self.opt.phase == 'test':
-            self.real_A = self.input_A
+        if self.opt.phase == 'train':
+            self.real_C = self.input_C
 
     def test(self):
         real_A = self.input_A
@@ -113,7 +117,7 @@ class ReflectionSynthesisModel(BaseModel):
 
     def backward_D(self):
         mix_AB = self.mix_AB_pool.query(self.mix_AB)
-        loss_D = self.backward_D_basic(self.netD, self.real_B, mix_AB)
+        loss_D = self.backward_D_basic(self.netD, self.real_C, mix_AB)
         self.loss_D = loss_D.item()
 
     def backward_G(self):
@@ -167,10 +171,11 @@ class ReflectionSynthesisModel(BaseModel):
     def get_current_visuals_train(self):
         reflection = util.tensor2im(self.reflection)
         transmission = util.tensor2im(self.transmission)
-        real_B = util.tensor2im(self.input_B)
+        real_C = util.tensor2im(self.input_C)
+        mix_AB = util.tensor2im(self.mix_AB)
 
         ret_visuals = OrderedDict([('reflection', reflection),('transmission', transmission),
-                                   ('real_B', real_B)])
+                                   ('real_C', real_C), ('mix_AB', mix_AB)])
         return ret_visuals
 
     def get_current_visuals_test(self):
