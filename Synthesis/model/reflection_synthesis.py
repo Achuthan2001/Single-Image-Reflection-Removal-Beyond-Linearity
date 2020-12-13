@@ -1,7 +1,7 @@
 import torch
 from collections import OrderedDict
 from torch.autograd import Variable
-from ..util import util
+import util.util as util
 from model.image_pool import ImagePool
 from .base_model import BaseModel
 from . import networks

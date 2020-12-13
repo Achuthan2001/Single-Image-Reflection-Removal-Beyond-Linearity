@@ -60,7 +60,6 @@ class SynthesisDataset(BaseDataset):
         B_path = self.B_paths[index_B]            
 
         B_img = Image.open(B_path).convert('RGB')
-        B_img = group[0]
         B_img_origin = B_img
 
         reflection_type = 'defocused'
