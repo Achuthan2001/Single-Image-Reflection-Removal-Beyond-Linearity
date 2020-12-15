@@ -67,10 +67,6 @@ class SynthesisDataset(BaseDataset):
 
         A_img = Image.open(A_path).convert('RGB')
         B_img = Image.open(B_path).convert('RGB')
-        group = [A_img, B_img]
-        index = np.random.randint(0, 2)
-        A_img = group[index]
-        B_img = group[1-index]
         A_img_origin = A_img
 
         if self.opt.phase == 'train':
