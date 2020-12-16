@@ -50,11 +50,11 @@ class ReflectionRemovalModel(BaseModel):
             input_B = input['B']
             input_W = input['W']
         if len(self.gpu_ids) > 0:
-            input_C = input_C.cuda(self.gpu_ids[0], async=True)
+            input_C = input_C.cuda(self.gpu_ids[0], non_blocking=True)
             if self.opt.phase == 'train':
-                input_A = input_A.cuda(self.gpu_ids[0], async=True)
-                input_B = input_B.cuda(self.gpu_ids[0], async=True)
-                input_W = input_W.cuda(self.gpu_ids[0], async=True)
+                input_A = input_A.cuda(self.gpu_ids[0], non_blocking=True)
+                input_B = input_B.cuda(self.gpu_ids[0], non_blocking=True)
+                input_W = input_W.cuda(self.gpu_ids[0], non_blocking=True)
         self.input_C = input_C
         if self.opt.phase == 'train':
             self.input_A = input_A
