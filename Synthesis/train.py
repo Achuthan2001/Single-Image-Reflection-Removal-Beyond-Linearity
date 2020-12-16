@@ -49,7 +49,7 @@ for epoch in range(opt.epoch_count, opt.niter + opt.niter_decay + 1):
                     util.save_image(image_numpy, img_path)
                 else:
                     img_path = os.path.join(img_dir, 'epoch%.3d_%s.npy' % (epoch, label))
-                    util.save_image(image_numpy, img_path)
+                    np.save(img_path, image_numpy)
 
             errors = model.get_current_errors()
             t = (time.time() - iter_start_time) / opt.batchSize
