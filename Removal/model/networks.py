@@ -274,7 +274,7 @@ class ReflRmNetwork(nn.Module):
             feature_d_inner = nn.parallel.data_parallel(self.model_d_inner, feature_d_4, self.gpu_ids)
 
             # upsampling transmission features ('back' is for the old name 'background')
-            feature_u_4_back =  nn.parallel.data_parallel(self.model_u_inner_back, feature_d_inner, self.gpu_ids)
+            feature_u_4_back =  nn.parallel.data_parallel(self.model_u_inner_back, feature_d_inner.detach().clone(), self.gpu_ids)
             horizontal_4 = feature_d_4.shape[2] - feature_u_4_back.shape[2]
             vertical_4 = feature_d_4.shape[3] - feature_u_4_back.shape[3]
             feature_u_4_back = torch.nn.functional.pad(feature_u_4_back, (vertical_4, 0, horizontal_4, 0))
@@ -302,7 +302,7 @@ class ReflRmNetwork(nn.Module):
             output_trans =  nn.parallel.data_parallel(self.model_u_0_back, torch.cat([feature_d_0, feature_u_0_back], 1), self.gpu_ids)
 
             # unsampling reflection features
-            feature_u_4_refl =  nn.parallel.data_parallel(self.model_u_inner_refl, feature_d_inner, self.gpu_ids)
+            feature_u_4_refl =  nn.parallel.data_parallel(self.model_u_inner_refl, feature_d_inner.detach().clone(), self.gpu_ids)
             feature_u_4_refl = torch.nn.functional.pad(feature_u_4_refl, (vertical_4, 0, horizontal_4, 0))
 
             feature_u_3_refl =  nn.parallel.data_parallel(self.model_u_4_refl, torch.cat([feature_d_4, feature_u_4_refl], 1), self.gpu_ids)
