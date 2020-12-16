@@ -44,8 +44,12 @@ for epoch in range(opt.epoch_count, opt.niter + opt.niter_decay + 1):
             if not os.path.exists(img_dir):
                 os.makedirs(img_dir)
             for label, image_numpy in model.get_current_visuals_train().items():
-                img_path = os.path.join(img_dir, 'epoch%.3d_%s.png' % (epoch, label))
-                util.save_image(image_numpy, img_path)
+                if label != 'W':
+                    img_path = os.path.join(img_dir, 'epoch%.3d_%s.png' % (epoch, label))
+                    util.save_image(image_numpy, img_path)
+                else:
+                    img_path = os.path.join(img_dir, 'epoch%.3d_%s.npy' % (epoch, label))
+                    util.save_image(image_numpy, img_path)
 
             errors = model.get_current_errors()
             t = (time.time() - iter_start_time) / opt.batchSize
