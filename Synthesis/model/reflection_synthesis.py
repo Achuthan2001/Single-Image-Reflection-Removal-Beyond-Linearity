@@ -176,7 +176,7 @@ class ReflectionSynthesisModel(BaseModel):
         W = util.tensor2im(self.W)
 
         ret_visuals = OrderedDict([('reflection', reflection),('transmission', transmission),
-                                   ('real_C', real_C), ('mix_AB', mix_AB), ('W', W)]
+                                   ('real_C', real_C), ('mix_AB', mix_AB), ('W', W)])
         return ret_visuals
 
     def get_current_visuals_test(self):
