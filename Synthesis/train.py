@@ -4,6 +4,7 @@ from data.custom_dataset_data_loader import CreateDataLoader
 from model.reflection_synthesis import ReflectionSynthesisModel
 import os
 from PIL import Image
+import numpy as np
 from util import util
 
 opt = TrainOptions().parse()
