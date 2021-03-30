@@ -22,7 +22,8 @@ class SynthesisDataset(BaseDataset):
     def initialize(self, opt):
         self.opt = opt
         self.root = opt.dataroot
-        self.loadSize = opt.loadSize
+        self.loadSizeH = opt.loadSizeH
+        self.loadSizeW = opt.loadSizeW
         self.dir_A = os.path.join(opt.dataroot, opt.phase + 'A')
         self.dir_B = os.path.join(opt.dataroot, opt.phase + 'B')
 
@@ -42,18 +43,11 @@ class SynthesisDataset(BaseDataset):
             self.C_size = len(self.C_paths)
 
     def get_transform(self, img):
-        width = img.size[0]
-        height = img.size[1]
 
         transform_list = []
-        if width < height:
-            transform_list.append(transforms.RandomCrop((width, width)))
-        else:
-            transform_list.append(transforms.RandomCrop((height, height)))
-        transform_list.append(transforms.Resize((self.loadSize, self.loadSize)))
+        transform_list.append(transforms.Resize((self.loadSizeH, self.loadSizeW)))
         transform_list.append(transforms.ToTensor())
-        transform_list.append(transforms.Normalize((0.5, 0.5, 0.5),
-                                                   (0.5, 0.5, 0.5)))
+        transform_list.append(transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)))
         transform = transforms.Compose(transform_list)
         img = transform(img)
 
