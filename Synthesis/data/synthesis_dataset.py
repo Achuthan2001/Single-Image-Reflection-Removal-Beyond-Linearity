@@ -56,7 +56,7 @@ class SynthesisDataset(BaseDataset):
     def get_crop_resized(self, img):
 
         transform_list = []
-        transform_list.append(transforms.CenterCrop((img.size[0]-img.size[0]%self.loadSizeH, img.size[1]-img.size[1]%self.loadSizeW)))
+        transform_list.append(transforms.CenterCrop((img.size[1]-img.size[1]%self.loadSizeH, img.size[0]-img.size[0]%self.loadSizeW)))
         transform_list.append(transforms.Resize((self.loadSizeH, self.loadSizeW)))
         transform_list.append(transforms.ToTensor())
         transform_list.append(transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)))
@@ -108,15 +108,15 @@ class SynthesisDataset(BaseDataset):
             A_img = transforms.functional.crop(A_img, shift_y, shift_x, cols-shift_y, rows-shift_x)
             A_img = A_img.resize((rows, cols), Image.BILINEAR)
 
-        A = self.get_transform(A_img)
-        A_origin = self.get_transform(A_img_origin)
-        B = self.get_transform(B_img)
+        A = self.get_crop_resized(A_img)
+        A_origin = self.get_crop_resized(A_img_origin)
+        B = self.get_resized(B_img)
 
         if self.opt.phase == 'train':
             index_C = random.randint(0, self.C_size - 1)
             C_path = self.C_paths[index_C]
             C_img = Image.open(C_path).convert('RGB')
-            C = self.get_transform(C_img)
+            C = self.get_resized(C_img)
 
         if self.opt.phase == 'train':
             return {'A': A, 'A_origin': A_origin, 'B': B, 'C': C,
