@@ -42,9 +42,21 @@ class SynthesisDataset(BaseDataset):
             self.C_paths = sorted(self.C_paths)
             self.C_size = len(self.C_paths)
 
-    def get_transform(self, img):
+    def get_resized(self, img):
 
         transform_list = []
+        transform_list.append(transforms.Resize((self.loadSizeH, self.loadSizeW)))
+        transform_list.append(transforms.ToTensor())
+        transform_list.append(transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)))
+        transform = transforms.Compose(transform_list)
+        img = transform(img)
+
+        return img
+
+    def get_crop_resized(self, img):
+
+        transform_list = []
+        transform_list.append(transforms.CenterCrop((img.size[0]-img.size[0]%self.loadSizeH, img.size[1]-img.size[1]%self.loadSizeW)))
         transform_list.append(transforms.Resize((self.loadSizeH, self.loadSizeW)))
         transform_list.append(transforms.ToTensor())
         transform_list.append(transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)))
