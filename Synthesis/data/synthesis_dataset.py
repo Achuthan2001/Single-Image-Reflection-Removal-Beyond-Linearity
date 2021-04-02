@@ -87,7 +87,7 @@ class SynthesisDataset(BaseDataset):
         # Defocused reflection
         elif reflection_type == 'defocused':
             A_img = np.asarray(A_img)
-            k_sz = np.linspace(0,3,80)
+            k_sz = np.linspace(5,10,80)
             sigma = k_sz[np.random.randint(0, len(k_sz))]
             sz = int(2*np.ceil(2*sigma)+1)
             A_img = cv2.GaussianBlur(A_img,(sz,sz),sigma,sigma,0)
