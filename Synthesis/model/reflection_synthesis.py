@@ -128,7 +128,7 @@ class ReflectionSynthesisModel(BaseModel):
         concat_AB = torch.cat((transmission, reflection), dim=1)
         W_mask = self.netG(concat_AB)
         W_revise = self.One - W_mask
-        mix_AB = W_mask * transmission + W_revise * reflection
+        mix_AB = W_revise * transmission + W_mask * reflection
         pred_fake = self.netD(mix_AB)
         loss_GAN = self.criterionGAN(pred_fake, True)
 
